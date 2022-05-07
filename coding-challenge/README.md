@@ -1,4 +1,3 @@
-# CodingChallenge
 Program TicTacToe with React
 
 This is the coding challenge for the job interview at Principia Mentis
