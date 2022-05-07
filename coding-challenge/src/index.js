@@ -28,16 +28,36 @@ class Board extends React.Component {
                     {this.renderSquare(0)}
                     {this.renderSquare(1)}
                     {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
                     {this.renderSquare(3)}
-                    {this.renderSquare(4)}
                     {this.renderSquare(5)}
                 </div>
                 <div className="board-row">
                     {this.renderSquare(6)}
                     {this.renderSquare(7)}
                     {this.renderSquare(8)}
+                    {this.renderSquare(9)}
+                    {this.renderSquare(10)}
+                </div>
+                <div className="board-row">
+                    {this.renderSquare(11)}
+                    {this.renderSquare(12)}
+                    {this.renderSquare(13)}
+                    {this.renderSquare(14)}
+                    {this.renderSquare(15)}
+                </div>
+                <div className="board-row">
+                    {this.renderSquare(16)}
+                    {this.renderSquare(17)}
+                    {this.renderSquare(18)}
+                    {this.renderSquare(19)}
+                    {this.renderSquare(20)}
+                </div>
+                <div className="board-row">
+                    {this.renderSquare(21)}
+                    {this.renderSquare(22)}
+                    {this.renderSquare(23)}
+                    {this.renderSquare(24)}
+                    {this.renderSquare(25)}
                 </div>
             </div>
         );
@@ -49,7 +69,7 @@ class Game extends React.Component {
         super(props);
         this.state = {
             history: [{
-                squares: Array(9).fill(null),
+                squares: Array(25).fill(null),
             }],
             xIsNext: true,
             stepNumber: 0,
@@ -87,7 +107,7 @@ class Game extends React.Component {
 
         const moves = history.map((step, move) => {
             const desc = move ?
-                'Go to move #' + move + (this.state.xIsNext ? 'X ticked: ' : 'O ticked: ') + 'row/col':
+                'Go to move #' + move + ": " + (this.state.xIsNext ? 'X ticked: ' : 'O ticked: '):
                 'Go to game start';
             return (
                 <li key={move}>
@@ -139,6 +159,41 @@ function calculateWinner(squares) {
     }
     return null;
 }
+
+function checkThreeInARow(squares) {
+    let type = 0;
+    for (let i = 0; i < 25; i++) {
+        if(squares[i + 1] === squares[i]) {
+            type = 1;
+        } else if(squares[i + 5] === squares[i]) {
+            type = 1
+        } else if(squares[i+5+1] === squares[i]) {
+            type = 2
+        } else if(squares[i+5-1] === squares[i]) {
+            type = 3
+        }
+        if(secondCheck(squares, i, type)) {
+            return squares[i];
+        }
+    }
+    return null
+}
+
+function secondCheck(squares, index, type) {
+    if(type === 0) {
+        return null
+    } else if (type === 1 && squares[index + 1] === squares[index]) {
+        return squares[index];
+    } else if (type === 2 && squares[index + 5] === squares[index]) {
+        return squares[index];
+    } else if (type === 3 && squares[index + 5 + 1] === squares[index]) {
+        return squares[index];
+    } else if (type === 4 && squares[index + 5 - 1] === squares[index]) {
+        return squares[index];
+    }
+    return null;
+}
+
 
 // ========================================
 
