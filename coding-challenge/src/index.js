@@ -29,35 +29,35 @@ class Board extends React.Component {
                     {this.renderSquare(1)}
                     {this.renderSquare(2)}
                     {this.renderSquare(3)}
-                    {this.renderSquare(5)}
+                    {this.renderSquare(4)}
                 </div>
                 <div className="board-row">
+                    {this.renderSquare(5)}
                     {this.renderSquare(6)}
                     {this.renderSquare(7)}
                     {this.renderSquare(8)}
                     {this.renderSquare(9)}
-                    {this.renderSquare(10)}
                 </div>
                 <div className="board-row">
+                    {this.renderSquare(10)}
                     {this.renderSquare(11)}
                     {this.renderSquare(12)}
                     {this.renderSquare(13)}
                     {this.renderSquare(14)}
-                    {this.renderSquare(15)}
                 </div>
                 <div className="board-row">
+                    {this.renderSquare(15)}
                     {this.renderSquare(16)}
                     {this.renderSquare(17)}
                     {this.renderSquare(18)}
                     {this.renderSquare(19)}
-                    {this.renderSquare(20)}
                 </div>
                 <div className="board-row">
+                    {this.renderSquare(20)}
                     {this.renderSquare(21)}
                     {this.renderSquare(22)}
                     {this.renderSquare(23)}
                     {this.renderSquare(24)}
-                    {this.renderSquare(25)}
                 </div>
             </div>
         );
@@ -72,7 +72,9 @@ class Game extends React.Component {
                 squares: Array(25).fill(null),
             }],
             xIsNext: true,
+            isWinner: false,
             stepNumber: 0,
+            lastIndex: 0,
         };
     }
 
@@ -80,6 +82,7 @@ class Game extends React.Component {
         this.setState({
             stepNumber: step,
             xIsNext: (step % 2) === 0,
+            isWinner: false,
         })
     }
 
@@ -87,27 +90,34 @@ class Game extends React.Component {
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
-        if(calculateWinner(squares) || squares[i]) {   // squares[i] falls nicht null -> return
+        console.log("click at index " + i);
+        let index = dropDown(squares, i);
+        console.log("new index is " + index);
+        console.log(calculateWinner(squares, index));
+        if(this.state.isWinner || squares[i]) {   // squares[i] falls nicht null -> return
+            console.log("There is already a winner!");
             return;
         }
-        squares[i] = this.state.xIsNext ? 'X' : 'O';
+        squares[index] = this.state.xIsNext ? 'X' : 'O';
         this.setState({
             history: history.concat([{
                 squares: squares,
             }]),
             xIsNext: !this.state.xIsNext,
             stepNumber: history.length,
+            lastIndex: index,
+            isWinner: calculateWinner(squares, index),
         });
     }
 
     render() {
         const history = this.state.history;
         const current = history[this.state.stepNumber];
-        const winner = calculateWinner(current.squares);
+        const winner = calculateWinner(current.squares, this.state.lastIndex);
 
         const moves = history.map((step, move) => {
             const desc = move ?
-                'Go to move #' + move + ": " + (this.state.xIsNext ? 'X ticked: ' : 'O ticked: '):
+                'Go to move #' + move + ": " + (move % 2 ? 'X ticked: ' : 'O ticked: '):
                 'Go to game start';
             return (
                 <li key={move}>
@@ -140,44 +150,43 @@ class Game extends React.Component {
     }
 }
 
-function calculateWinner(squares) {
-    return checkThreeInARow(squares);
-}
-
-function checkThreeInARow(squares) {
-    let type = 0;
-    for (let i = 0; i < 25; i++) {
-        if(squares[i + 1] === squares[i]) {
-            type = 1;
-        } else if(squares[i + 5] === squares[i]) {
-            type = 1
-        } else if(squares[i+5+1] === squares[i]) {
-            type = 2
-        } else if(squares[i+5-1] === squares[i]) {
-            type = 3
-        }
-        if(secondCheck(squares, i, type)) {
-            return squares[i];
+function dropDown(squares, index) {
+    while (index <= squares.length) {
+        if(squares[index + 5] === null) {
+            index = index + 5;
+        } else {
+            return index;
         }
     }
-    return null
+    return index;
 }
 
-function secondCheck(squares, index, type) {
-    if(type === 0) {
+function calculateWinner(squares, index) {
+    console.log("Entered calculateWinner() with index " + index);
+    if(squares[index] === null) {
         return null
-    } else if (type === 1 && squares[index + 1] === squares[index]) {
-        return squares[index];
-    } else if (type === 2 && squares[index + 5] === squares[index]) {
-        return squares[index];
-    } else if (type === 3 && squares[index + 5 + 1] === squares[index]) {
-        return squares[index];
-    } else if (type === 4 && squares[index + 5 - 1] === squares[index]) {
+    } else if ( // check current in the middle
+        (squares[index] === squares[index - 1] && squares[index] === squares[index + 1]) ||
+        (squares[index] === squares[index - 5] && squares[index] === squares[index + 5]) ||
+        (squares[index] === squares[index - (5 - 1)] && squares[index] === squares[index + (5 - 1)]) ||
+        (squares[index] === squares[index - (5 + 1)] && squares[index] === squares[index + (5 + 1)])) {
         return squares[index];
     }
-    return null;
+    else if ( // check current at the edge
+        (squares[index] === squares[index + 1] && squares[index] === squares[index + 2]) ||
+        (squares[index] === squares[index - 1] && squares[index] === squares[index - 2]) ||
+        (squares[index] === squares[index + 5] && squares[index] === squares[index + 2 * 5]) ||
+        (squares[index] === squares[index - 5] && squares[index] === squares[index - 2 * 5]) ||
+        (squares[index] === squares[index + (5 - 1)] && squares[index] === squares[index + 2 * (5 - 1)]) ||
+        (squares[index] === squares[index - (5 - 1)] && squares[index] === squares[index - 2 * (5 - 1)]) ||
+        (squares[index] === squares[index + (5 + 1)] && squares[index] === squares[index + 2 * (5 + 1)]) ||
+        (squares[index] === squares[index - (5 + 1)] && squares[index] === squares[index - 2 * (5 + 1)])
+        ) {
+        return squares[index];
+    } else {
+        return null
+    }
 }
-
 
 // ========================================
 
