@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
-
+let size = 5;
 
 function Square(props) {
     return (
@@ -24,6 +24,17 @@ class Board extends React.Component {
     }
 
     render() {
+        // source: https://stackoverflow.com/questions/45224174/creating-javascript-loop-in-html
+        /*let myHTML = '<div>'
+        for (let i = 0; i < size; i++) {
+            myHTML = myHTML + myHTML.map(() => {return '<div className="board-row">'}).join('');
+            for (let j = 0; j < size; j++) {
+                myHTML = myHTML + myHTML.map((i) => {return '{this.renderSquare(' + i + ')}'}).join('');
+            }
+            myHTML = myHTML + myHTML.map(() => {return '</div>'}).join('');
+        }
+        myHTML = myHTML.map(() => { return `</div>` }).join('')
+        return myHTML;*/
         return (
             <div>
                 <div className="board-row">
@@ -71,7 +82,7 @@ class Game extends React.Component {
         super(props);
         this.state = {
             history: [{
-                squares: Array(25).fill(null),
+                squares: Array(size * size).fill(null),
             }],
             xIsNext: true,
             isWinner: false,
@@ -154,8 +165,8 @@ class Game extends React.Component {
 
 function dropDown(squares, index) {
     while (index <= squares.length) {
-        if(squares[index + 5] === null) {
-            index = index + 5;
+        if(squares[index + size] === null) {
+            index = index + size;
         } else {
             return index;
         }
@@ -169,20 +180,20 @@ function calculateWinner(squares, index) {
         return null
     } else if ( // check current in the middle
         (squares[index] === squares[index - 1] && squares[index] === squares[index + 1]) ||
-        (squares[index] === squares[index - 5] && squares[index] === squares[index + 5]) ||
-        (squares[index] === squares[index - (5 - 1)] && squares[index] === squares[index + (5 - 1)]) ||
-        (squares[index] === squares[index - (5 + 1)] && squares[index] === squares[index + (5 + 1)])) {
+        (squares[index] === squares[index - size] && squares[index] === squares[index + size]) ||
+        (squares[index] === squares[index - (size - 1)] && squares[index] === squares[index + (size - 1)]) ||
+        (squares[index] === squares[index - (size + 1)] && squares[index] === squares[index + (size + 1)])) {
         return squares[index];
     }
     else if ( // check current at the edge
         (squares[index] === squares[index + 1] && squares[index] === squares[index + 2]) ||
         (squares[index] === squares[index - 1] && squares[index] === squares[index - 2]) ||
-        (squares[index] === squares[index + 5] && squares[index] === squares[index + 2 * 5]) ||
-        (squares[index] === squares[index - 5] && squares[index] === squares[index - 2 * 5]) ||
-        (squares[index] === squares[index + (5 - 1)] && squares[index] === squares[index + 2 * (5 - 1)]) ||
-        (squares[index] === squares[index - (5 - 1)] && squares[index] === squares[index - 2 * (5 - 1)]) ||
-        (squares[index] === squares[index + (5 + 1)] && squares[index] === squares[index + 2 * (5 + 1)]) ||
-        (squares[index] === squares[index - (5 + 1)] && squares[index] === squares[index - 2 * (5 + 1)])
+        (squares[index] === squares[index + size] && squares[index] === squares[index + 2 * size]) ||
+        (squares[index] === squares[index - size] && squares[index] === squares[index - 2 * size]) ||
+        (squares[index] === squares[index + (size - 1)] && squares[index] === squares[index + 2 * (size - 1)]) ||
+        (squares[index] === squares[index - (size - 1)] && squares[index] === squares[index - 2 * (size - 1)]) ||
+        (squares[index] === squares[index + (size + 1)] && squares[index] === squares[index + 2 * (size + 1)]) ||
+        (squares[index] === squares[index - (size + 1)] && squares[index] === squares[index - 2 * (size + 1)])
         ) {
         return squares[index];
     } else {
