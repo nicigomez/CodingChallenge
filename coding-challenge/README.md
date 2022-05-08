@@ -21,6 +21,7 @@ fourth step:
                                                             `- - - - -`
                                                             `- - - - -`
 - last idea (implemented yet): check all posibilities from last square ticked
+[CodingChallenge.pdf](https://github.com/nicigomez/CodingChallenge/files/8647671/CodingChallenge.pdf)
 
 fifth step:
 - some nicer design for the game
